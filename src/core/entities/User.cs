@@ -23,6 +23,7 @@ public class User : BaseEntity
         Email = email;
         PasswordHash = passwordHash;
         Role = role;
+        
         CreatedAt = DateTime.UtcNow;
         IsDeleted = false;
     }
@@ -34,9 +35,14 @@ public class User : BaseEntity
         if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException(nameof(email));
     }
 
-    public void ChangeRole(UserRole role)
+    public void ChangeRole(UserRole newRole)
     {
-        Role = role;
+        Role = newRole;
+    }
+    public void SetNewPassword(string newPasswordHash)
+    {
+        if (string.IsNullOrWhiteSpace(newPasswordHash)) throw new ArgumentNullException(nameof(newPasswordHash));
+        PasswordHash = newPasswordHash;
     }
     
 }
