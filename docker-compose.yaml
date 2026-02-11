@@ -1,0 +1,15 @@
+services:
+  db:
+    image: docker.io/library/postgres:latest
+    container_name: obragris_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 031297luis
+      POSTGRES_DB: obragris_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - obragris_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  obragris_postgres_data:
