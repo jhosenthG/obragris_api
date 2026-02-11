@@ -4,6 +4,7 @@ using Task = obragris_api.core.Task;
 
 namespace obragris_api.infrastructure.data;
 
+
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
@@ -15,23 +16,56 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        // Configuración explícita por entidad (AOT-Safe)
-        ConfigureEntity<User>(modelBuilder);
-        ConfigureEntity<Project>(modelBuilder);
-        ConfigureEntity<Report>(modelBuilder);
-        ConfigureEntity<Task>(modelBuilder);
+        ConfigureUser(modelBuilder);
+        ConfigureProject(modelBuilder);
+        ConfigureReport(modelBuilder);
+        ConfigureTask(modelBuilder);
     }
 
-    private static void ConfigureEntity<T>(ModelBuilder modelBuilder) where T : BaseEntity
+    private static void ConfigureUser(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<T>(entity =>
+        modelBuilder.Entity<User>(entity =>
         {
             entity.HasQueryFilter(e => !e.IsDeleted);
-            
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("now()"); // Postgres
+                .HasDefaultValueSql("now()");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValue(false);
+        });
+    }
 
+    private static void ConfigureProject(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Project>(entity =>
+        {
+            entity.HasQueryFilter(e => !e.IsDeleted);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()");
+
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValue(false);
+        });
+    }
+
+    private static void ConfigureReport(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Report>(entity =>
+        {
+            entity.HasQueryFilter(e => !e.IsDeleted);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValue(false);
+        });
+    }
+
+    private static void ConfigureTask(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Task>(entity =>
+        {
+            entity.HasQueryFilter(e => !e.IsDeleted);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()");
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValue(false);
         });
