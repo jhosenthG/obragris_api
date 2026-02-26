@@ -1,4 +1,5 @@
-﻿using obragris_api.domain.shared;
+﻿using obragris_api.domain.enums;
+using obragris_api.domain.shared;
 
 namespace obragris_api.domain.entities;
 
@@ -137,13 +138,4 @@ public class Project : BaseEntity<Guid>
         if (companyId == Guid.Empty)
             throw new ArgumentException("Company ID is required", nameof(companyId));
     }
-}
-
-public enum ProjectStatus
-{
-    Pending = 0,
-    InProgress = 1,
-    OnHold = 2,
-    Completed = 3,
-    Cancelled = 4
 }

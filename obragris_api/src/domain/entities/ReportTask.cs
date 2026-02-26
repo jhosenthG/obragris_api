@@ -1,4 +1,6 @@
-﻿using obragris_api.domain.shared;
+﻿using obragris_api.domain.enums;
+using obragris_api.domain.shared;
+using TaskStatus = obragris_api.domain.enums.TaskStatus;
 
 namespace obragris_api.domain.entities;
 
@@ -184,34 +186,4 @@ public class ReportTask : BaseEntity<Guid>
         if (!Enum.IsDefined(typeof(TaskCategory), category))
             throw new ArgumentException("Invalid task category", nameof(category));
     }
-}
-
-public enum TaskPriority
-{
-    Low = 0,
-    Medium = 1,
-    High = 2,
-    Critical = 3
-}
-
-public enum TaskStatus
-{
-    Pending = 0,
-    InProgress = 1,
-    Completed = 2,
-    Cancelled = 3,
-    Blocked = 4
-}
-
-public enum TaskCategory
-{
-    Development = 0,
-    Design = 1,
-    Testing = 2,
-    Documentation = 3,
-    Meeting = 4,
-    Research = 5,
-    Maintenance = 6,
-    Deployment = 7,
-    Other = 8
 }

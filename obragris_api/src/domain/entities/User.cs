@@ -1,4 +1,5 @@
-﻿using obragris_api.domain.shared;
+﻿using obragris_api.domain.enums;
+using obragris_api.domain.shared;
 
 namespace obragris_api.domain.entities;
 
@@ -176,12 +177,4 @@ public class User : BaseEntity<Guid>
         return SubscriptionStatus == SubscriptionStatus.Active 
             && (!SubscriptionExpiresAt.HasValue || SubscriptionExpiresAt.Value > DateTime.UtcNow);
     }
-}
-
-public enum SubscriptionStatus
-{
-    Active = 0,
-    Cancelled = 1,
-    Suspended = 2,
-    Expired = 3
 }

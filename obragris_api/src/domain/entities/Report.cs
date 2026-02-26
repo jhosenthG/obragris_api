@@ -1,4 +1,5 @@
-﻿using obragris_api.domain.shared;
+﻿using obragris_api.domain.enums;
+using obragris_api.domain.shared;
 
 namespace obragris_api.domain.entities;
 
@@ -146,24 +147,4 @@ public class Report : BaseEntity<Guid>
         if (!Enum.IsDefined(typeof(ReportType), type))
             throw new ArgumentException("Invalid report type", nameof(type));
     }
-}
-
-public enum ReportType
-{
-    Weekly = 0,
-    Monthly = 1,
-    Quarterly = 2,
-    Annual = 3,
-    Incident = 4,
-    Progress = 5,
-    Financial = 6
-}
-
-public enum ReportStatus
-{
-    Draft = 0,
-    Submitted = 1,
-    UnderReview = 2,
-    Approved = 3,
-    Rejected = 4
 }
