@@ -16,18 +16,15 @@ public class Report : BaseEntity<Guid>
     public DateTime? RejectedAt { get; private set; }
     public string? RejectionReason { get; private set; }
 
-    // Foreign Keys
     public Guid ProjectId { get; private set; }
     public Guid CreatedByUserId { get; private set; }
     public Guid? ApprovedByUserId { get; private set; }
 
-    // Navigation properties
     private readonly List<ReportTask> _tasks = new();
     public IReadOnlyCollection<ReportTask> Tasks => _tasks.AsReadOnly();
 
     private Report()
     {
-        // Required by EF Core
     }
 
     public Report(
@@ -45,6 +42,7 @@ public class Report : BaseEntity<Guid>
         var sanitizedContent = InputValidator.Sanitize(content, nameof(content), isOptional: true);
 
         ValidateRequiredFields(sanitizedTitle, projectId, createdByUserId, type);
+        ValidateReportDate(reportDate);
 
         Id = Guid.NewGuid();
         TenantId = tenantId;
@@ -146,5 +144,11 @@ public class Report : BaseEntity<Guid>
 
         if (!Enum.IsDefined(typeof(ReportType), type))
             throw new ArgumentException("Invalid report type", nameof(type));
+    }
+
+    private static void ValidateReportDate(DateTime reportDate)
+    {
+        if (reportDate > DateTime.UtcNow.AddYears(1))
+            throw new ArgumentException("Report date cannot be more than one year in the future", nameof(reportDate));
     }
 }

@@ -13,16 +13,13 @@ public class Project : BaseEntity<Guid>
     public ProjectStatus Status { get; private set; } = ProjectStatus.Pending;
     public decimal? Budget { get; private set; }
 
-    // Foreign Keys
     public Guid CompanyId { get; private set; }
 
-    // Navigation properties
     private readonly List<Report> _reports = new();
     public IReadOnlyCollection<Report> Reports => _reports.AsReadOnly();
 
     private Project()
     {
-        // Required by EF Core
     }
 
     public Project(
@@ -40,6 +37,8 @@ public class Project : BaseEntity<Guid>
         var sanitizedClientName = InputValidator.Sanitize(clientName, nameof(clientName), isOptional: true);
 
         ValidateRequiredFields(sanitizedName, companyId);
+        ValidateDates(startDate, endDate);
+        ValidateBudget(budget);
 
         Id = Guid.NewGuid();
         TenantId = tenantId;
@@ -67,6 +66,8 @@ public class Project : BaseEntity<Guid>
         var sanitizedClientName = InputValidator.Sanitize(clientName, nameof(clientName), isOptional: true);
 
         ValidateRequiredFields(sanitizedName, CompanyId);
+        ValidateDates(startDate, endDate);
+        ValidateBudget(budget);
 
         Name = sanitizedName.Trim();
         Description = string.IsNullOrEmpty(sanitizedDescription) ? null : sanitizedDescription.Trim();
@@ -79,6 +80,9 @@ public class Project : BaseEntity<Guid>
 
     public void UpdateStatus(ProjectStatus status)
     {
+        if (!Enum.IsDefined(typeof(ProjectStatus), status))
+            throw new ArgumentException("Invalid project status", nameof(status));
+
         Status = status;
         LastModifiedAt = DateTime.UtcNow;
     }
@@ -107,6 +111,9 @@ public class Project : BaseEntity<Guid>
     {
         if (Status == ProjectStatus.Completed)
             throw new InvalidOperationException("Cannot cancel a completed project");
+
+        if (Status == ProjectStatus.Cancelled)
+            throw new InvalidOperationException("Project is already cancelled");
 
         Status = ProjectStatus.Cancelled;
         LastModifiedAt = DateTime.UtcNow;
@@ -137,5 +144,17 @@ public class Project : BaseEntity<Guid>
 
         if (companyId == Guid.Empty)
             throw new ArgumentException("Company ID is required", nameof(companyId));
+    }
+
+    private static void ValidateDates(DateTime? startDate, DateTime? endDate)
+    {
+        if (endDate.HasValue && startDate.HasValue && endDate.Value < startDate.Value)
+            throw new ArgumentException("End date cannot be before start date", nameof(endDate));
+    }
+
+    private static void ValidateBudget(decimal? budget)
+    {
+        if (budget.HasValue && budget.Value < 0)
+            throw new ArgumentException("Budget cannot be negative", nameof(budget));
     }
 }

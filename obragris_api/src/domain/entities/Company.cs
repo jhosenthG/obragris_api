@@ -13,7 +13,6 @@ public class Company : BaseEntity<Guid>
     public string? Website { get; private set; }
     public bool IsActive { get; private set; } = true;
 
-    // Navigation properties
     private readonly List<Project> _projects = new();
     public IReadOnlyCollection<Project> Projects => _projects.AsReadOnly();
 
@@ -22,7 +21,6 @@ public class Company : BaseEntity<Guid>
 
     private Company()
     {
-        // Required by EF Core
     }
 
     public Company(

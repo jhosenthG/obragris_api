@@ -18,18 +18,15 @@ public class ReportTask : BaseEntity<Guid>
     public int ActualHours { get; private set; }
     public decimal? Cost { get; private set; }
 
-    // Foreign Keys
     public Guid ReportId { get; private set; }
     public Guid? AssignedToUserId { get; private set; }
     public Guid? ParentTaskId { get; private set; }
 
-    // Navigation properties
     private readonly List<ReportTask> _subTasks = new();
     public IReadOnlyCollection<ReportTask> SubTasks => _subTasks.AsReadOnly();
 
     private ReportTask()
     {
-        // Required by EF Core
     }
 
     public ReportTask(
@@ -48,6 +45,7 @@ public class ReportTask : BaseEntity<Guid>
         var sanitizedDescription = InputValidator.Sanitize(description, nameof(description), isOptional: true);
 
         ValidateRequiredFields(sanitizedTitle, reportId, category);
+        ValidateEstimatedHours(estimatedHours);
 
         Id = Guid.NewGuid();
         TenantId = tenantId;
@@ -76,6 +74,7 @@ public class ReportTask : BaseEntity<Guid>
         var sanitizedDescription = InputValidator.Sanitize(description, nameof(description), isOptional: true);
 
         ValidateRequiredFields(sanitizedTitle, ReportId, category);
+        ValidateEstimatedHours(estimatedHours);
 
         Title = sanitizedTitle.Trim();
         Description = string.IsNullOrEmpty(sanitizedDescription) ? null : sanitizedDescription.Trim();
@@ -110,7 +109,6 @@ public class ReportTask : BaseEntity<Guid>
         if (Status == TaskStatus.Pending)
             throw new InvalidOperationException("Cannot complete a pending task");
 
-        // Check if all sub-tasks are completed
         if (_subTasks.Count > 0 && _subTasks.Any(s => s.Status != TaskStatus.Completed))
             throw new InvalidOperationException("Cannot complete task with incomplete sub-tasks");
 
@@ -185,5 +183,11 @@ public class ReportTask : BaseEntity<Guid>
 
         if (!Enum.IsDefined(typeof(TaskCategory), category))
             throw new ArgumentException("Invalid task category", nameof(category));
+    }
+
+    private static void ValidateEstimatedHours(int estimatedHours)
+    {
+        if (estimatedHours < 0)
+            throw new ArgumentException("Estimated hours cannot be negative", nameof(estimatedHours));
     }
 }

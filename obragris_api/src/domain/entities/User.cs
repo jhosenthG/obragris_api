@@ -16,10 +16,8 @@ public class User : BaseEntity<Guid>
     public SubscriptionStatus SubscriptionStatus { get; private set; } = SubscriptionStatus.Active;
     public DateTime? SubscriptionExpiresAt { get; private set; }
 
-    // Foreign Keys
     public Guid CompanyId { get; private set; }
 
-    // Navigation properties
     private readonly List<Project> _assignedProjects = new();
     public IReadOnlyCollection<Project> AssignedProjects => _assignedProjects.AsReadOnly();
 
@@ -28,7 +26,6 @@ public class User : BaseEntity<Guid>
 
     private User()
     {
-        // Required by EF Core
     }
 
     public User(
